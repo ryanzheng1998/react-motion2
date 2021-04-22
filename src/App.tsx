@@ -1,25 +1,15 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Motion from './react-motion2/Motion'
+import { spring } from './react-motion2/spring';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Motion
+      defaultStyle={{x: 0}} 
+      style={{x: spring(10)}}
+    >
+      {number => <p>{number.x}</p>}
+    </Motion>
   );
 }
 

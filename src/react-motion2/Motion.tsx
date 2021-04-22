@@ -3,6 +3,7 @@ import { mapToZero } from './mapToZero'
 import { stripStyle } from './striptStyle'
 import { stepper } from './stepper'
 import { PlainStyle, Style, Velocity } from './types'
+import shouldStopAnimation from './shouldStopAnimation'
 
 // ----------------------
 // state model
@@ -21,7 +22,6 @@ interface State {
     currentVelocity: Velocity;
     lastIdealStyle: PlainStyle;
     lastIdealVelocity: Velocity;
-    wasAnimating: boolean;
 }
 
 // ----------------------
@@ -122,7 +122,6 @@ const Motion: React.FC<Props> = (p) => {
         currentVelocity: mapToZero(p.defaultStyle || stripStyle(p.style)),
         lastIdealStyle: p.defaultStyle || stripStyle(p.style),
         lastIdealVelocity: mapToZero(p.defaultStyle || stripStyle(p.style)),
-        wasAnimating: false,
     }
 
     const [state, dispatch] = React.useReducer(reducer, initState)
@@ -131,12 +130,18 @@ const Motion: React.FC<Props> = (p) => {
   
     const step = React.useCallback((t1: number) => (t2: number) => {
         if (t2 - t1 > 10) {
+            if(shouldStopAnimation(state.currentStyle, p.style, state.currentVelocity)) {
+                if (p.onRest) {
+                    p.onRest()
+                }
+                return
+            }
             dispatch(tick(t2, p.style))
             animationRef.current = requestAnimationFrame(step(t2))
         } else {
             animationRef.current = requestAnimationFrame(step(t1))
         }
-    }, [p.style])
+    }, [p, state.currentStyle, state.currentVelocity])
   
     React.useEffect(() => {
       animationRef.current = requestAnimationFrame(step(0))

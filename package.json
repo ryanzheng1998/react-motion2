@@ -1,6 +1,7 @@
 {
   "name": "react-motion2",
   "version": "0.1.0",
+  "description": "A spring that solves your animation problems.",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.10",
